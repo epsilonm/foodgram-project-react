@@ -111,6 +111,7 @@ class Recipe(models.Model):
 
 
 class FavShopCart(models.Model):
+    """Родительский класс модели избранного и продуктовой корзины."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -133,6 +134,7 @@ class FavShopCart(models.Model):
 
 
 class Favorite(FavShopCart):
+    """Модель избранного."""
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
@@ -140,6 +142,7 @@ class Favorite(FavShopCart):
 
 
 class ShoppingCart(FavShopCart):
+    """Модель продуктовой корзины."""
     class Meta:
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзина'
@@ -147,6 +150,7 @@ class ShoppingCart(FavShopCart):
 
 
 class RecipeAmount(models.Model):
+    """Модель связи рецепта и количества ингредиентов."""
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
