@@ -1,7 +1,7 @@
 import csv
 
 from django.core.management.base import BaseCommand, CommandError
-from recipies.models import Ingredient, Tag
+from recipes.models import Ingredient, Tag
 
 
 class Command(BaseCommand):

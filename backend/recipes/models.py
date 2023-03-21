@@ -71,7 +71,7 @@ class Recipe(models.Model):
         User,
         verbose_name='Автор рецепта',
         on_delete=models.CASCADE,
-        related_name='recipies')
+        related_name='recipes')
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Тэги'
@@ -149,10 +149,13 @@ class ShoppingCart(FavShopCart):
 class RecipeAmount(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        related_name='ingredienttorecipe'
+        )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE
+
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name='Количество',
