@@ -1,38 +1,31 @@
-import csv
+import json
 
 from django.core.management.base import BaseCommand, CommandError
 from recipes.models import Ingredient, Tag
 
 
 class Command(BaseCommand):
+    MODELS = {
+        "i": Ingredient,
+        "t": Tag
+    }
     help = 'Загружает данные из .csv и формирует модель Ingredients'
 
     def add_arguments(self, parser):
-        parser.add_argument('--path', type=str)
-        parser.add_argument('--model', type=str)
+        parser.add_argument('path', type=str)
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument('-t', action="store_true")
+        group.add_argument("-i", action="store_true")
 
     def handle(self, *args, **kwargs):
         path = kwargs['path']
-        try:
-            model = kwargs['model']
-        except model not in {'Ingredient', 'Tag'}:
-            raise CommandError('Неверное имя модели')
+        flag = "t" if kwargs["t"] else "i"
+        model = self.MODELS[flag]
         try:
             with open(path, 'rt', encoding='utf-8') as file:
-                reader = csv.reader(file, delimiter=',')
-                if model == 'Ingredient':
-                    for row in reader:
-                        Ingredient.objects.create(
-                            name=row[0],
-                            measurement_unit=row[1]
-                        )
-                elif model == 'Tag':
-                    for row in reader:
-                        Tag.objects.create(
-                            name=row[0],
-                            color=row[1],
-                            slug=row[2]
-                        )
+                data = json.loads(file.read())
+                for attrs in data:
+                    model.objects.get_or_create(**attrs)
         except Exception as exc:
             raise (CommandError(exc))
 

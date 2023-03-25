@@ -1,0 +1,5 @@
+[{"name": "Горячее", "color": "#FF0000", "slug": "hot"},
+{"name": "Рыба", "color": "#5F9EA0", "slug": "fish"},
+{"name": "Веган", "color": "#00FF7F", "slug": "vegan"},
+{"name": "Мясное", "color": "#DC143C", "slug": "meat"}
+]

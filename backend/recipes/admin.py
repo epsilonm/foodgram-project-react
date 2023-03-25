@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import (
     Recipe, Ingredient, Tag, Favorite,
     ShoppingCart, RecipeAmount)
-# Register your models here.
 
 
 class RecipeAmountInline(admin.TabularInline):
@@ -16,8 +15,7 @@ class RecipeAmountInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """Интерфейс управления рецептами."""
     list_display = (
-        'name', 'author', 'get_favorite',
-        'get_ingredients'
+        'name', 'author', 'get_favorite'
     )
     search_fields = ('name', 'author', 'tags')
     inlines = (RecipeAmountInline, )
@@ -25,13 +23,6 @@ class RecipeAdmin(admin.ModelAdmin):
     def get_favorite(self, obj):
         return obj.favorite_recipes.count()
     get_favorite.short_description = 'Избранные рецепты'
-
-    def get_ingredients(self, obj):
-        return ', '.join([
-            ingredient.name for ingredient
-            in obj.ingredients.all()
-        ])
-    get_ingredients.short_description = 'Ингредиенты'
 
 
 @admin.register(Ingredient)

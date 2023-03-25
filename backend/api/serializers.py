@@ -38,7 +38,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class RecipeAmountSerializer(serializers.ModelSerializer):
     """Сериализатор связи ингредиентов и рецепта."""
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all(),
+        source="ingredient.id")
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -60,11 +62,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра рецептов."""
     tags = TagSerializer(many=True)
     ingredients = RecipeAmountSerializer(
-        many=True, source='ingredienttorecipe'
-        )
+        many=True)
     author = UserSerializer(read_only=True)
-    is_favorite = serializers.BooleanField()
-    is_in_shopping_cart = serializers.BooleanField()
+    is_favorite = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField(max_length=None)
 
     class Meta:
@@ -75,6 +76,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'text', 'cooking_time', 'is_favorite',
             'is_in_shopping_cart'
               )
+
+    def get_is_favorite(self, obj):
+        request = self.context.get("request")
+        if not request or request.user.is_anonymous:
+            return False
+        return request.user.favorite_recipes.filter(recipe=obj).exists()
+
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get("request")
+        if not request or request.user.is_anonymous:
+            return False
+        return request.user.shopping_carts.filter(recipe=obj).exists()
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -97,11 +110,37 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'ingredients', 'name', 'image',
             'text', 'cooking_time',)
 
+    def validate_tags(self, tags):
+        for tag in tags:
+            if not Tag.objects.filter(id=tag.id).exists():
+                raise serializers.ValidationError("Выбранный тег отсутствует!")
+        return tags
+
+    def validate_cooking_time(self, cooking_time):
+        if cooking_time < 1:
+            raise serializers.ValidationError(
+                "Время готовки не может быть меньше минуты!")
+        return cooking_time
+
+    def validate_ingredients(self, ingredients):
+        ingredient_list = []
+        if not ingredients:
+            raise serializers.ValidationError("Ингредиенты отстустствуют!")
+        for elem in ingredients:
+            if elem["ingredient"].get("id") in ingredient_list:
+                raise serializers.ValidationError(
+                    f'{elem["ingredient"]} не может быть добавлен дважды!')
+            ingredient_list.append(elem["ingredient"].get("id"))
+            print(elem)
+            if int(elem.get("amount")) < 1:
+                raise serializers.ValidationError(
+                    "Количество не может быть меньше единицы!")
+
     @staticmethod
     def bound_ingredients_recipe(ingredients, recipe):
         return [
             RecipeAmount(
-                ingredient=data.pop('id'),
+                ingredient=data.pop('ingredient').get("id"),
                 amount=data.pop('amount'),
                 recipe=recipe) for data in ingredients
         ]
@@ -212,7 +251,12 @@ class SubsctiptionListSerializer(UserSerializer):
         limit = request.GET.get("recipes_limit")
         recipes = obj.recipes.all()
         if limit:
-            recipes = recipes[:int(limit)]
+            try:
+                recipes = recipes[:int(limit)]
+            except ValueError:
+                raise ValidationError(
+                    f"{limit} - Неверный тип query-параметра!"
+                    )
         serializer = RecipeShortSerializer(recipes, many=True, read_only=True)
         return serializer.data
 

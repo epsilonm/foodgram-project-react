@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.conf import settings
 from django.db.models import F, Q
 from django.db.models.constraints import UniqueConstraint, CheckConstraint
 from django.db import models
@@ -10,26 +11,28 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('first_name', 'last_name', 'username')
     username = models.CharField(
-        max_length=150,
+        max_length=settings.UNIVERSAL_USER_FIELD_LENGTH,
         unique=True,
         validators=(UnicodeUsernameValidator(),),
         verbose_name='Юзернейм'
         )
     email = models.EmailField(
-        max_length=254,
+        max_length=settings.EMAIL_LENGTH,
         unique=True,
         verbose_name='Адрес электронной почты'
     )
     first_name = models.CharField(
-        max_length=150,
+        max_length=settings.UNIVERSAL_USER_FIELD_LENGTH,
+        validators=(UnicodeUsernameValidator(),),
         verbose_name='Имя пользователя'
     )
     last_name = models.CharField(
-        max_length=150,
+        max_length=settings.UNIVERSAL_USER_FIELD_LENGTH,
+        validators=(UnicodeUsernameValidator(),),
         verbose_name='Фамилия пользователя'
     )
     password = models.CharField(
-        max_length=150,
+        max_length=settings.UNIVERSAL_USER_FIELD_LENGTH,
         verbose_name='Пароль пользователя'
     )
 
