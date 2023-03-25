@@ -1,7 +1,8 @@
+from django.db.models import Subquery
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import SearchFilter
 
-from recipes.models import Ingredient, Recipe, Tag
+from recipes.models import Ingredient, Favorite, Recipe, Tag, ShoppingCart
 
 
 class IngredientFilter(SearchFilter):
@@ -29,10 +30,15 @@ class RecipeFilter(FilterSet):
 
     def filter_is_favorited(self, queryset, name, value):
         if value and self.request.user.is_authenticated:
-            return queryset.filter(favorite_recipes__user=self.request.user)
+            in_favs = Favorite.objects.filter(user=self.request.user)
+            return queryset.filter(
+                id__in=Subquery(in_favs.values("recipe__id"))
+            )
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         if value and self.request.user.is_authenticated:
-            return queryset.filter(shopping_carts__user=self.request.user)
+            in_cart = ShoppingCart.objects.filter(user=self.request.user)
+            return queryset.filter(
+                id__in=Subquery(in_cart.values("recipe_id")))
         return queryset
