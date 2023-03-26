@@ -64,7 +64,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     ingredients = RecipeAmountSerializer(
         many=True)
     author = UserSerializer(read_only=True)
-    is_favorite = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField(max_length=None)
 
@@ -73,11 +73,11 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'tags', 'author',
             'ingredients', 'name', 'image',
-            'text', 'cooking_time', 'is_favorite',
+            'text', 'cooking_time', 'is_favorited',
             'is_in_shopping_cart'
               )
 
-    def get_is_favorite(self, obj):
+    def get_is_favorited(self, obj):
         request = self.context.get("request")
         if not request or request.user.is_anonymous:
             return False
@@ -135,6 +135,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             if int(elem.get("amount")) < 1:
                 raise serializers.ValidationError(
                     "Количество не может быть меньше единицы!")
+        return ingredients
 
     @staticmethod
     def bound_ingredients_recipe(ingredients, recipe):

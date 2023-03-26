@@ -1,6 +1,7 @@
 from colorfield.fields import ColorField
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
+from django.conf import settings
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator
@@ -12,7 +13,7 @@ from users.models import User
 class Tag(models.Model):
     """Модель тэга."""
     name = models.CharField(
-        max_length=150,
+        max_length=settings.UNIVERSAL_FIELD_LENGTH,
         db_index=True,
         unique=True,
         verbose_name='Название тэга')
@@ -23,7 +24,7 @@ class Tag(models.Model):
         verbose_name='HEX-код'
         )
     slug = models.SlugField(
-        max_length=150,
+        max_length=settings.UNIVERSAL_FIELD_LENGTH,
         verbose_name='Слаг',
         unique=True)
 
@@ -38,13 +39,13 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     """Модель ингредиента."""
     name = models.CharField(
-        max_length=150,
+        max_length=settings.UNIVERSAL_FIELD_LENGTH,
         verbose_name='Название ингредиента',
         db_index=True
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
-        max_length=150
+        max_length=settings.UNIVERSAL_FIELD_LENGTH
     )
 
     class Meta:
@@ -73,7 +74,7 @@ class Recipe(models.Model):
         verbose_name='Тэги'
         )
     name = models.CharField(
-        max_length=200,
+        max_length=settings.RECIPE_NAME_LENGTH,
         verbose_name='Название рецепта',
         )
     text = models.TextField(verbose_name='Описание рецепта')
@@ -81,10 +82,10 @@ class Recipe(models.Model):
         verbose_name='Время приготовления',
         validators=(
             MinValueValidator(
-                1,
+                settings.MIN_AMOUNT_VALUE,
                 message='Время готовки должно быть больше минуты!'),
             MaxValueValidator(
-                1441,
+                settings.MAX_AMOUNT_VALUE,
                 message='Время готовки не должно быть больше суток!')
         )
     )

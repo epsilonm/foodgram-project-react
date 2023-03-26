@@ -14,9 +14,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-value')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', default=False)
+DEBUG = os.getenv('DEBUG', default=True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(' ')
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -36,6 +37,7 @@ INSTALLED_APPS = [
     'colorfield',
     'djoser',
     'django_filters',
+    'corsheaders'
     
 ]
 
@@ -47,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'foodgram.urls'
@@ -76,7 +79,7 @@ if DEBUG:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-else:  
+else:
     DATABASES = {
         'default': {
             'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
@@ -165,4 +168,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Project constants
 EMAIL_LENGTH = 254
-UNIVERSAL_USER_FIELD_LENGTH = 150
+UNIVERSAL_FIELD_LENGTH = 150
+RECIPE_NAME_LENGTH = 200
+MIN_AMOUNT_VALUE = 1
+MAX_AMOUNT_VALUE = 1441
