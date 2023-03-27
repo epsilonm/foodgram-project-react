@@ -54,28 +54,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeReadSerializer
-        else:
-            return RecipeWriteSerializer
+        return RecipeWriteSerializer
 
     @action(detail=False, methods=["GET"])
     def download_shopping_cart(self, request):
         recipes_in_cart = ShoppingCart.objects.filter(user=request.user)
         ingredients = RecipeAmount.objects.filter(
             recipe__in=Subquery(recipes_in_cart.values("pk"))
-            ).order_by("ingredient__name").values(
+        ).order_by("ingredient__name").values(
             "ingredient__name", "ingredient__measurement_unit"
-            ).annotate(amount=Sum("amount"))
+        ).annotate(amount=Sum("amount"))
         return FileResponse(
             make_pdf(ingredients),
             as_attachment=True,
             filename='shopping_cart.pdf')
 
     @action(
-            detail=True,
-            methods=['post'],
-            permission_classes=[IsAuthenticated],
-            name='Add to Favorite'
-            )
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated],
+        name='Add to Favorite'
+    )
     def favorite(self, request, pk):
         context = {'request': request}
         recipe = get_object_or_404(Recipe, id=pk)
@@ -97,11 +96,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-            detail=True,
-            methods=['post'],
-            permission_classes=[IsAuthenticated],
-            name='Add to ShoppingCart'
-            )
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated],
+        name='Add to ShoppingCart'
+    )
     def shopping_cart(self, request, pk):
         context = {'request': request}
         recipe = get_object_or_404(Recipe, id=pk)
@@ -132,7 +131,7 @@ class UserViewSet(UserViewSet):
         methods=['post', 'delete'],
         detail=True,
         permission_classes=[IsAuthenticated],
-        )
+    )
     def subscribe(self, request, id):
         user = request.user
         author = get_object_or_404(User, id=id)
@@ -147,7 +146,7 @@ class UserViewSet(UserViewSet):
         if request.method == "DELETE":
             get_object_or_404(
                 Follow, user=user, author=author
-                ).delete()
+            ).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[IsAuthenticated])

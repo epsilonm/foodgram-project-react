@@ -22,7 +22,7 @@ class Tag(models.Model):
         max_length=7,
         unique=True,
         verbose_name='HEX-код'
-        )
+    )
     slug = models.SlugField(
         max_length=settings.UNIVERSAL_FIELD_LENGTH,
         verbose_name='Слаг',
@@ -72,11 +72,11 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Тэги'
-        )
+    )
     name = models.CharField(
         max_length=settings.RECIPE_NAME_LENGTH,
         verbose_name='Название рецепта',
-        )
+    )
     text = models.TextField(verbose_name='Описание рецепта')
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',

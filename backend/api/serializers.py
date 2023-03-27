@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from recipes.models import (
     Tag, Ingredient, Recipe, RecipeAmount, Favorite, ShoppingCart
-    )
+)
 
 User = get_user_model()
 
@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'email', 'id', 'username', 'first_name',
             'last_name', 'is_subscribed'
-            )
+        )
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -44,7 +44,7 @@ class RecipeAmountSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
-        )
+    )
 
     class Meta:
         model = RecipeAmount
@@ -75,7 +75,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             'ingredients', 'name', 'image',
             'text', 'cooking_time', 'is_favorited',
             'is_in_shopping_cart'
-              )
+        )
 
     def get_is_favorited(self, obj):
         request = self.context.get("request")
@@ -154,7 +154,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         RecipeAmount.objects.bulk_create(
             self.bound_ingredients_recipe(ingredients, recipe)
-            )
+        )
         return recipe
 
     def update(self, instance, validated_data):
@@ -164,7 +164,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         RecipeAmount.objects.bulk_create(
             self.bound_ingredients_recipe(ingredients, instance)
-            )
+        )
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
@@ -190,7 +190,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         if user.favorite_recipes.filter(recipe=data['recipe']).exists():
             raise serializers.ValidationError(
                 'Рецепт уже добавлен в избранное!'
-                )
+            )
         return data
 
     def to_representation(self, inctance):
@@ -211,7 +211,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         if user.shopping_carts.filter(recipe=data['recipe']).exists():
             raise serializers.ValidationError(
                 'Рецепт уже имеется в корзине покупок!'
-                )
+            )
         return data
 
     def to_representation(self, inctance):
@@ -257,7 +257,7 @@ class SubsctiptionListSerializer(UserSerializer):
             except ValueError:
                 raise ValidationError(
                     f"{limit} - Неверный тип query-параметра!"
-                    )
+                )
         serializer = RecipeShortSerializer(recipes, many=True, read_only=True)
         return serializer.data
 

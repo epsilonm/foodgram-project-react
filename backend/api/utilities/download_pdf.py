@@ -19,8 +19,8 @@ def make_pdf(ingredients):
     data = {
         ingrdnt['ingredient__name']: {
             ingrdnt['ingredient__measurement_unit']: ingrdnt['amount']
-                } for ingrdnt in ingredients
-        }
+        } for ingrdnt in ingredients
+    }
     page.setFont(font, 15, leading=None)
     page.setFillColorRGB(0.29296875, 0.453125, 0.609375)
     page.drawString(260, 800, "Список ингредиентов")
@@ -30,7 +30,7 @@ def make_pdf(ingredients):
     y1 = 750
     for key, value in data.items():
         page.setFont(font, 15, leading=None)
-        page.drawString(x1, y1-12, f"{key}")
+        page.drawString(x1, y1 - 12, f"{key}")
         for unit, amount in value.items():
             page.setFont(font, 10, leading=None)
             page.drawString(x1, y1 - 30, f"{unit} - {amount}")
