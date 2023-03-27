@@ -9,7 +9,7 @@ class Command(BaseCommand):
         "i": Ingredient,
         "t": Tag
     }
-    help = 'Загружает данные из .csv и формирует модель Ingredients'
+    help = 'Загружает данные из .json и формирует модель'
 
     def add_arguments(self, parser):
         parser.add_argument('path', type=str)

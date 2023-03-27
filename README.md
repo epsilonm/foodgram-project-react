@@ -1,4 +1,9 @@
+![example workflow](https://github.com/epsilonm/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 # Продуктовый помощник
+Адрес сайта: http://130.193.52.64/ \
+Данные для входа в админку:\
+**email** admin@gmail.com \
+**password** q1w1e1r1t1y1
 
 
 **«Продуктовый помощник»**: сайт, на котором пользователи будут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Сервис «Список покупок» позволит пользователям создавать список продуктов, которые нужно купить для приготовления выбранных блюд. 
@@ -50,10 +55,10 @@ DB_PORT=5432
 `docker-compose exec backend python manage.py collectstatic --no-input`
 
 ***Наполните базу ингредиентами***\
-`docker-compose exec backend python manage.py upload_csv --path data/ingredients.csv --model Ingredient`
+`docker-compose exec backend python manage.py upload_csv data/ingredients.json -i`
 
 ***Наполните базу тэгами***\
-`docker-compose exec backend python manage.py upload_csv --path data/tags.csv --model Tag`
+`docker-compose exec backend python manage.py upload_csv data/tags.json -t`
 
 ***Остановить проект***\
 `docker-compose down`

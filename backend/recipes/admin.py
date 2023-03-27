@@ -21,7 +21,7 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = (RecipeAmountInline, )
 
     def get_favorite(self, obj):
-        return obj.favorite_recipes.count()
+        return Favorite.objects.filter(recipe=obj).count()
     get_favorite.short_description = 'Избранные рецепты'
 
 
