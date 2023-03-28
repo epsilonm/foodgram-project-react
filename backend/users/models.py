@@ -5,6 +5,8 @@ from django.db.models import F, Q
 from django.db.models.constraints import UniqueConstraint, CheckConstraint
 from django.db import models
 
+from .validators import validate_username
+
 
 class User(AbstractUser):
     """Модель пользователя."""
@@ -13,7 +15,7 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=settings.UNIVERSAL_FIELD_LENGTH,
         unique=True,
-        validators=(UnicodeUsernameValidator(),),
+        validators=(UnicodeUsernameValidator(), validate_username),
         verbose_name='Юзернейм'
     )
     email = models.EmailField(

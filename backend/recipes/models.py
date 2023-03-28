@@ -4,7 +4,8 @@ from django.db.models.constraints import UniqueConstraint
 from django.conf import settings
 from django.core.validators import (
     MaxValueValidator,
-    MinValueValidator
+    MinValueValidator,
+    RegexValidator
 )
 
 from users.models import User
@@ -16,7 +17,8 @@ class Tag(models.Model):
         max_length=settings.UNIVERSAL_FIELD_LENGTH,
         db_index=True,
         unique=True,
-        verbose_name='Название тэга')
+        verbose_name='Название тэга',
+        validators=(RegexValidator(regex=r"^[\w.@+-]+\Z"),))
     color = ColorField(
         format='hex',
         max_length=7,
@@ -41,11 +43,13 @@ class Ingredient(models.Model):
     name = models.CharField(
         max_length=settings.UNIVERSAL_FIELD_LENGTH,
         verbose_name='Название ингредиента',
-        db_index=True
+        db_index=True,
+        validators=(RegexValidator(regex=r"^[\w.@+-]+\Z"),)
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
-        max_length=settings.UNIVERSAL_FIELD_LENGTH
+        max_length=settings.UNIVERSAL_FIELD_LENGTH,
+        validators=(RegexValidator(regex=r"^[\w.@+-]+\Z"),)
     )
 
     class Meta:
@@ -76,6 +80,7 @@ class Recipe(models.Model):
     name = models.CharField(
         max_length=settings.RECIPE_NAME_LENGTH,
         verbose_name='Название рецепта',
+        validators=(RegexValidator(regex=r"^[\w.@+-]+\Z"),)
     )
     text = models.TextField(verbose_name='Описание рецепта')
     cooking_time = models.PositiveSmallIntegerField(
