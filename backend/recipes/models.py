@@ -18,7 +18,7 @@ class Tag(models.Model):
         db_index=True,
         unique=True,
         verbose_name='Название тэга',
-        validators=(RegexValidator(regex=r"^[\w.@+-]+\Z"),))
+        validators=(RegexValidator(regex=r"^[\w.@+-]+"),))
     color = ColorField(
         format='hex',
         max_length=7,
@@ -44,7 +44,7 @@ class Ingredient(models.Model):
         max_length=settings.UNIVERSAL_FIELD_LENGTH,
         verbose_name='Название ингредиента',
         db_index=True,
-        validators=(RegexValidator(regex=r"^[\w.@+-]+\Z"),)
+        validators=(RegexValidator(regex=r"^[\w.@+-]+"),)
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
@@ -80,7 +80,7 @@ class Recipe(models.Model):
     name = models.CharField(
         max_length=settings.RECIPE_NAME_LENGTH,
         verbose_name='Название рецепта',
-        validators=(RegexValidator(regex=r"^[\w.@+-]+\Z"),)
+        validators=(RegexValidator(regex=r"^[\w.@+-]+"),)
     )
     text = models.TextField(verbose_name='Описание рецепта')
     cooking_time = models.PositiveSmallIntegerField(
